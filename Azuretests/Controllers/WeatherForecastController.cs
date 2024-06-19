@@ -32,7 +32,7 @@ namespace Azuretests.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public string Get()
         {
-            return "New Works";
+            return "New Works!";
         }
     }
 }
