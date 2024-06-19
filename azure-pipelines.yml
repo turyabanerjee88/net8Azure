@@ -8,7 +8,7 @@ steps:
     publishWebProjects: true
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'dotnet-ar'
+    azureSubscription: 'turyabanerjee88-dotnet-App-70d47318-b12a-425d-8e7c-125dea7190fb'
     appType: 'webAppLinux'
     appName: 'test-azure-tb'
     package: '$(System.DefaultWorkingDirectory)/**/*.zip'
