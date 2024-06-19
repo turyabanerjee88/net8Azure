@@ -48,7 +48,7 @@ namespace Azuretests.Controllers
             try
             {
                 var secret = client.GetSecret("mysecret");
-                vl = secret.Value.ToString();
+                vl = secret.Value.Value.ToString();
             }
             catch (Exception ex)
             {
