@@ -15,10 +15,13 @@ namespace Azuretests.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,
+            IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         //[HttpGet(Name = "GetWeatherForecast")]
@@ -40,7 +43,7 @@ namespace Azuretests.Controllers
         [HttpGet(Name = "GetSecret")]
         public string GetSecret()
         {
-            string keyVaultName = "testkvtb";
+            string keyVaultName = _configuration.GetSection("kvname").ToString();
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
 
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
@@ -56,7 +59,7 @@ namespace Azuretests.Controllers
 
             }
             
-            return $"New Works! {(vl)}";
+            return $"New Works! {(vl)}, Kv name - {keyVaultName}";
         }
     }
 }
