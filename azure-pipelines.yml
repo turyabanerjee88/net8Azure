@@ -14,8 +14,8 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/Azuretests/bin/Release/net8.0'
-    Contents: '**\bin\release\**'
+    SourceFolder: '$(Build.SourcesDirectory)/Azuretests'
+    Contents: '**\bin\Release\net8.0\**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
