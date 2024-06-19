@@ -1,9 +1,11 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Azuretests.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -33,6 +35,16 @@ namespace Azuretests.Controllers
         public string Get()
         {
             return "New Works!";
+        }
+        [HttpGet(Name = "GetSecret")]
+        public string GetSecret()
+        {
+            string keyVaultName = "testkvtb";
+            var kvUri = "https://" + keyVaultName + ".vault.azure.net";
+
+            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+            var secret = client.GetSecret("mysecret");
+            return $"New Works! {(secret?.Value.ToString() ?? "not found")}";
         }
     }
 }
