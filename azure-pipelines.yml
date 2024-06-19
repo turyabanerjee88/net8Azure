@@ -3,6 +3,7 @@ variables:
 
 steps:
 - task: DotNetCoreCLI@2
+  name: 'BuildApp'
   inputs:
     command: 'build'
     workingDirectory: 'Azuretests'
