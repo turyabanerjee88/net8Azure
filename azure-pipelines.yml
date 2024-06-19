@@ -15,5 +15,5 @@ steps:
   inputs:
     azureSubscription: 'dotnet-sc'
     appType: 'webAppLinux'
-    appName: 'test-azure-tb'
+    appName: $(appname)
     package: '$(System.DefaultWorkingDirectory)/**/*.zip'
