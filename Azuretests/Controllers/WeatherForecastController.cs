@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace Azuretests.Controllers
 {
@@ -43,8 +44,19 @@ namespace Azuretests.Controllers
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
 
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-            var secret = client.GetSecret("mysecret");
-            return $"New Works! {(secret?.Value.ToString() ?? "not found")}";
+            var vl = string.Empty;
+            try
+            {
+                var secret = client.GetSecret("mysecret");
+                vl = secret.Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                vl = ex.Message;
+
+            }
+            
+            return $"New Works! {(vl)}";
         }
     }
 }
