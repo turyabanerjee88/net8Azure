@@ -17,13 +17,11 @@ namespace Azuretests.Controllers
             _logger = logger;
             _configuration = configuration;
         }
-
         [HttpGet(Name = "GetSecret")]
         public string GetSecret(string name)
         {
             string keyVaultName = _configuration.GetValue<string>("kvname");
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
-
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
             var vl = string.Empty;
             try
