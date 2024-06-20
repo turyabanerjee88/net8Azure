@@ -20,7 +20,8 @@ namespace Azuretests.Controllers
         [HttpGet(Name = "GetSecret")]
         public string GetSecret(string name)
         {
-            string keyVaultName = _configuration.GetValue<string>("kvname");
+            string keyVaultName = _configuration.GetValue<string>("kvname") ??
+                string.Empty;
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
             var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
             var vl = string.Empty;

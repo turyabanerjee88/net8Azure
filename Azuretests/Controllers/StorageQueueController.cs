@@ -2,6 +2,7 @@ using Azure.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
+using Facade.Interfaces;
 
 namespace Azuretests.Controllers
 {
@@ -9,42 +10,45 @@ namespace Azuretests.Controllers
     [Route("[controller]/[action]")]
     public class StorageQueueController : ControllerBase
     {
+        private readonly IStorageAccount _storageAccount;
         private readonly ILogger<StorageQueueController> _logger;
         private readonly IConfiguration _configuration;
 
         public StorageQueueController(ILogger<StorageQueueController> logger,
-            IConfiguration configuration)
+            IConfiguration configuration, IStorageAccount storageAccount)
         {
             _logger = logger;
             _configuration = configuration;
+            _storageAccount = storageAccount;
         }
 
         [HttpGet(Name = "SendMessage")]
-        public async Task<string> SendMessage(string message)
+        public string SendMessage(string message)
         {
-            string storageAccountName = _configuration.GetValue<string>("StorageAccountName") ??
-                string.Empty;
-            var queueName = _configuration.GetValue<string>("QueueName");
-            var vl = string.Empty;
-            if (!string.IsNullOrEmpty(storageAccountName))
-            {
-                try
-                {
-                    QueueClient queueClient = new QueueClient(
-                    new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
-                    new DefaultAzureCredential());
-                    for (int i = 0; i < 10; i++)
-                    {
-                        await queueClient.SendMessageAsync($"{message}-{i}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    vl = ex.Message;
+            return _storageAccount.SendMessage(message);
+            //string storageAccountName = _configuration.GetValue<string>("StorageAccountName") ??
+            //    string.Empty;
+            //var queueName = _configuration.GetValue<string>("QueueName");
+            //var vl = string.Empty;
+            //if (!string.IsNullOrEmpty(storageAccountName))
+            //{
+            //    try
+            //    {
+            //        QueueClient queueClient = new QueueClient(
+            //        new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+            //        new DefaultAzureCredential());
+            //        for (int i = 0; i < 10; i++)
+            //        {
+            //            await queueClient.SendMessageAsync($"{message}-{i}");
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        vl = ex.Message;
 
-                }
-            }
-            return $"New Works! Exception:- {vl}";
+            //    }
+            //}
+            //return $"New Works! Exception:- {vl}";
         }
         [HttpGet]
         public async Task<string> GetMessages()
