@@ -37,7 +37,10 @@ namespace Azuretests.Controllers
                 QueueClient queueClient = new QueueClient(
                 new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
                 new DefaultAzureCredential());
-                await queueClient.SendMessageAsync(message);
+                for (int i = 0; i < 10; i++)
+                {
+                    await queueClient.SendMessageAsync($"{message}-{i}");
+                }                
             }
             catch (Exception ex)
             {
