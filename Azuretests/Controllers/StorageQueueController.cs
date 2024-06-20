@@ -25,7 +25,7 @@ namespace Azuretests.Controllers
         }
 
         [HttpGet(Name = "SendMessage")]
-        public async Task<string> SendMessage()
+        public async Task<string> SendMessage(string message)
         {
             string storageAccountName = _configuration.GetValue<string>("StorageAccountName");
             var queueName = _configuration.GetValue<string>("QueueName");
@@ -35,10 +35,9 @@ namespace Azuretests.Controllers
             try
             {
                 QueueClient queueClient = new QueueClient(
-    new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
-    new DefaultAzureCredential());
-                await queueClient.SendMessageAsync("First message");
-                await queueClient.SendMessageAsync("Second message");
+                new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+                new DefaultAzureCredential());
+                await queueClient.SendMessageAsync(message);
             }
             catch (Exception ex)
             {
@@ -46,6 +45,33 @@ namespace Azuretests.Controllers
 
             }
             return $"New Works! Exception:- {vl}";
+        }
+        [HttpGet]
+        public async Task<string> GetMessages()
+        {
+            string storageAccountName = _configuration.GetValue<string>("StorageAccountName");
+            var queueName = _configuration.GetValue<string>("QueueName");
+
+            var vl = string.Empty;
+            try
+            {
+                QueueClient queueClient = new QueueClient(
+                new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+                new DefaultAzureCredential());
+                // Peek at messages in the queue
+                PeekedMessage[] peekedMessages = await queueClient.PeekMessagesAsync(maxMessages: 10);
+
+                foreach (PeekedMessage peekedMessage in peekedMessages)
+                {
+                    vl += $"Message: {peekedMessage.MessageText} |||";
+                }
+            }
+            catch (Exception ex)
+            {
+                vl = ex.Message;
+
+            }
+            return $"New Works! Messages:- {vl}";
         }
     }
 }
