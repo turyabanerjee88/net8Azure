@@ -71,7 +71,35 @@ namespace Azuretests.Controllers
                 vl = ex.Message;
 
             }
-            return $"New Works! Messages:- {vl}";
+            return $"Messages retrieved! {vl}";
+        }
+        [HttpGet]
+        public async Task<string> ProcessMessages()
+        {
+            string storageAccountName = _configuration.GetValue<string>("StorageAccountName");
+            var queueName = _configuration.GetValue<string>("QueueName");
+
+            var vl = string.Empty;
+            try
+            {
+                QueueClient queueClient = new QueueClient(
+                new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+                new DefaultAzureCredential());
+                // Peek at messages in the queue
+                QueueMessage[] queueMessages = await queueClient.ReceiveMessagesAsync(maxMessages: 10);
+
+                foreach (QueueMessage msg in queueMessages)
+                {
+                    vl += $"Processed Message: {msg.MessageText} |||";
+                    await queueClient.DeleteMessageAsync(msg.MessageId, msg.PopReceipt);
+                }
+            }
+            catch (Exception ex)
+            {
+                vl = ex.Message;
+
+            }
+            return $"Message Process Works! {vl}";
         }
     }
 }

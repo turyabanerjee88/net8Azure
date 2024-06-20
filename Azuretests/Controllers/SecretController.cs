@@ -1,7 +1,6 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
 
 namespace Azuretests.Controllers
 {
@@ -9,11 +8,6 @@ namespace Azuretests.Controllers
     [Route("[controller]/[action]")]
     public class SecretController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<SecretController> _logger;
         private readonly IConfiguration _configuration;
 
@@ -25,7 +19,7 @@ namespace Azuretests.Controllers
         }
 
         [HttpGet(Name = "GetSecret")]
-        public string GetSecret()
+        public string GetSecret(string name)
         {
             string keyVaultName = _configuration.GetValue<string>("kvname");
             var kvUri = "https://" + keyVaultName + ".vault.azure.net";
@@ -34,16 +28,15 @@ namespace Azuretests.Controllers
             var vl = string.Empty;
             try
             {
-                var secret = client.GetSecret("mysecret");
+                var secret = client.GetSecret(name);
                 vl = secret.Value.Value.ToString();
             }
             catch (Exception ex)
             {
                 vl = ex.Message;
 
-            }
-            
-            return $"New Works! {(vl)}, Kv name - {keyVaultName}";
+            }            
+            return $"Get Secret Works! {(vl)}, Kv name - {keyVaultName}";
         }
     }
 }
