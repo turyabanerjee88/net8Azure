@@ -62,7 +62,7 @@ namespace Azuretests.Controllers
                 new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
                 new DefaultAzureCredential());
                 // Peek at messages in the queue
-                PeekedMessage[] peekedMessages = await queueClient.PeekMessagesAsync(maxMessages: 10);
+                PeekedMessage[] peekedMessages = await queueClient.PeekMessagesAsync(maxMessages: 500);
 
                 foreach (PeekedMessage peekedMessage in peekedMessages)
                 {
@@ -89,7 +89,7 @@ namespace Azuretests.Controllers
                 new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
                 new DefaultAzureCredential());
                 // Peek at messages in the queue
-                QueueMessage[] queueMessages = await queueClient.ReceiveMessagesAsync(maxMessages: 10);
+                QueueMessage[] queueMessages = await queueClient.ReceiveMessagesAsync(maxMessages: 500);
 
                 foreach (QueueMessage msg in queueMessages)
                 {
