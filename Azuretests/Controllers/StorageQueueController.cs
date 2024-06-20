@@ -89,7 +89,7 @@ namespace Azuretests.Controllers
                 new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
                 new DefaultAzureCredential());
                 // Peek at messages in the queue
-                QueueMessage[] queueMessages = await queueClient.ReceiveMessagesAsync(maxMessages: 500);
+                QueueMessage[] queueMessages = await queueClient.ReceiveMessagesAsync(maxMessages: 30);
 
                 foreach (QueueMessage msg in queueMessages)
                 {
