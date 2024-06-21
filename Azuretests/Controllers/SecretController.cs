@@ -1,5 +1,4 @@
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+using Facade.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Azuretests.Controllers
@@ -8,34 +7,21 @@ namespace Azuretests.Controllers
     [Route("[controller]/[action]")]
     public class SecretController : ControllerBase
     {
-        private readonly ILogger<SecretController> _logger;
-        private readonly IConfiguration _configuration;
-
-        public SecretController(ILogger<SecretController> logger,
-            IConfiguration configuration)
+        private readonly ISecretsManager _secretsManager;
+        public SecretController(ISecretsManager secretsManager)
         {
-            _logger = logger;
-            _configuration = configuration;
+            _secretsManager = secretsManager;
         }
-        [HttpGet(Name = "GetSecret")]
+        [HttpGet]
         public string GetSecret(string name)
         {
-            string keyVaultName = _configuration.GetValue<string>("kvname") ??
-                string.Empty;
-            var kvUri = "https://" + keyVaultName + ".vault.azure.net";
-            var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-            var vl = string.Empty;
-            try
-            {
-                var secret = client.GetSecret(name);
-                vl = secret.Value.Value.ToString();
-            }
-            catch (Exception ex)
-            {
-                vl = ex.Message;
-
-            }            
-            return $"Get Secret Works! {(vl)}, Kv name - {keyVaultName}";
+            return _secretsManager.GetSecret(name);
+        }
+        [HttpGet]
+        public string SetSecret(string name,string value)
+        {
+            _secretsManager.SetSecret(name, value);
+            return $"Secret saved with key {name} and value- {_secretsManager.GetSecret(name)}";
         }
     }
 }
