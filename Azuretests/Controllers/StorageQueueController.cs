@@ -20,7 +20,7 @@ namespace Azuretests.Controllers
             return _storageAccount.SendMessage(message);
         }
         [HttpGet]
-        public string SendMessageAsync(string message)
+        public string SendAsyncMessage(string message)
         {
             _storageAccount.SendMessageAsync(message);
             return "OK";
@@ -38,7 +38,7 @@ namespace Azuretests.Controllers
             return _storageAccount.ProcessMessages();
         }
         [HttpGet]
-        public string ProcessMessagesAsync()
+        public string ProcessAsyncMessages()
         {
             _storageAccount.ProcessMessagesAsync();
             return "OK";
