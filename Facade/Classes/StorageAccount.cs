@@ -40,6 +40,31 @@ namespace Facade.Classes
             return $"New Works! Exception:- {vl}";
             throw new NotImplementedException();
         }
+        public async void SendMessageAsync(string message)
+        {
+            string storageAccountName = _configuration.GetSection("StorageAccountName")?.Value ??
+                string.Empty;
+            var queueName = _configuration.GetSection("QueueName").Value;
+            var vl = string.Empty;
+            if (!string.IsNullOrEmpty(storageAccountName))
+            {
+                try
+                {
+                    QueueClient queueClient = new QueueClient(
+                    new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+                    new DefaultAzureCredential());
+                    for (int i = 0; i < 100; i++)
+                    {
+                        await queueClient.SendMessageAsync($"{message}-{i}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    vl = ex.Message;
+
+                }
+            }
+        }
         public string GetMessages()
         {
             string storageAccountName = _configuration.GetSection("StorageAccountName")?.Value ??
@@ -99,6 +124,34 @@ namespace Facade.Classes
                 }
             }
             return $"Message Process Works! {vl}";
+        }
+        public async void ProcessMessagesAsync()
+        {
+            string storageAccountName = _configuration.GetSection("StorageAccountName")?.Value ??
+                 string.Empty;
+            var queueName = _configuration.GetSection("QueueName").Value;
+            var isThereMessages = false;
+            if (!string.IsNullOrEmpty(storageAccountName))
+            {
+                do
+                {
+                    isThereMessages = false;
+                    QueueClient queueClient = new QueueClient(
+                    new Uri($"https://{storageAccountName}.queue.core.windows.net/{queueName}"),
+                    new DefaultAzureCredential());
+                    // Peek at messages in the queue
+                    QueueMessage[] queueMessages = queueClient.ReceiveMessages(maxMessages: 30);
+                    if (queueMessages.Length > 0)
+                    {
+                        isThereMessages = true;
+                    }
+                    foreach (QueueMessage msg in queueMessages)
+                    {
+                        Task.Delay(2000).Wait();
+                        await queueClient.DeleteMessageAsync(msg.MessageId, msg.PopReceipt);
+                    }
+                } while (isThereMessages);
+            }
         }
     }
 }
