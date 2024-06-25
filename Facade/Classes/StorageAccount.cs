@@ -146,10 +146,10 @@ namespace Facade.Classes
                         isThereMessages = true;
                     }
                     foreach (QueueMessage msg in queueMessages)
-                    {
-                        Task.Delay(2000).Wait();
+                    {   
                         await queueClient.DeleteMessageAsync(msg.MessageId, msg.PopReceipt);
                     }
+                    Task.Delay(2000).Wait();
                 } while (isThereMessages);
             }
         }
